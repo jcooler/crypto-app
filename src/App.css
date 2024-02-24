@@ -2,6 +2,16 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+
 @layer utilities {
 
   .bg-gradient-to-br {
@@ -22,16 +32,16 @@
 
 @layer components {
   .text-quantum {
-    background: linear-gradient(to right, #00FFFF, #ff6600);
+    background: linear-gradient(to right, #6f00ff, #0099ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text; /* adding a standard property for compatibility */
+    background-clip: text; /* //* standard property for compatibility */
   }
   .shadow-quantum {
-    box-shadow: 0 12px 16px rgba(255, 89, 0, 0.274), 0 6px 12px rgba(255, 90, 0, 0.15);
+    box-shadow: 0 12px 16px rgba(0, 140, 255, 0.274), 0 6px 12px rgba(255, 90, 0, 0.15);
   }
   .border-quantum {
-    border-image: linear-gradient(to right, #00FFFF, #ff6600);
+    border-image: linear-gradient(to right, #6f00ff, #0099ff);
     border-image-slice: 1;
   }
 }
@@ -68,3 +78,7 @@
   animation: slideInRight 0.8s ease-out;
 }
 
+
+.card a {
+  margin-top: auto; 
+}

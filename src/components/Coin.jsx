@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 const Coin = ({ name, symbol, icon, volume, rank, price, priceChange1d }) => {
+  // Determine if the price change is positive or negative
   const priceChangeColor = priceChange1d < 0 ? 'text-red-500' : 'text-green-500';
 
   // Convert volume to a whole number
