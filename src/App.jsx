@@ -6,7 +6,6 @@ import "./App.css";
 import CryptoNews from "./components/CryptoNews";
 
 function App() {
-
   const [coinList, setCoinList] = useState([]);
   const [search, setSearch] = useState("");
   const [news, setNews] = useState([]);
@@ -56,28 +55,26 @@ function App() {
   return (
     <>
       <Header />
-      {/*Hero Section */}
-      <div
-        className="hero-banner-container bg-gray-950 p-8 md:p-36 min-h-fit bg-no-repeat">
-        <div className="glassy-background relative py-16 px-8 md:py-32 md:px-20 lg:px-40 rounded-lg bg-opacity-30 shadow-quantum">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-quantum mb-4 animate__slideInLeft">
+      {/* Hero Section */}
+      <div className="bg-gray-950 p-8 md:p-12 lg:p-16 xl:p-20 2xl:p-24 lg:min-h-lvh flex items-center justify-center md:min-l-lvh">
+      <div className="relative py-12 md:py-24 lg:py-32 xl:py-40 2xl:py-48 px-4 md:px-8 lg:px-16 rounded-lg bg-opacity-30 shadow-quantum w-full md:w-3/5 lg:w-4/5 mx-auto text-center">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold text-quantum mb-4 md:mb-6 lg:mb-8 animate__slideInLeft">
             QuantumVista
           </h1>
           <div className="flex flex-col items-center md:flex-row md:justify-center">
-            <h2 className="text-lg md:text-xl lg:text-2xl text-accent mb-2 md:mr-4 animate__slideInRight">
+            <h2 className="text-quantum text-lg md:text-xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-accent mb-2 md:mr-4 animate__slideInRight">
               The #1 crypto web app
             </h2>
           </div>
-          <p className="text-sm md:text-md lg:text-lg text-gray-400 mb-2 md:mr-4 animate__slideInRight">
-            QuantumVista is a rapidly expanding web application within the
-            crypto space, making it a highly valuable resource for both
-            cryptocurrency traders and investors.
+          <p className="text-sm md:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-blue-400 mb-2 md:mr-4 animate__slideInRight">
+            QuantumVista is the fastest way to get the latest crypto news and all things cryptocurrency.
           </p>
         </div>
       </div>
+
       <div className="bg-zinc-950">
         <div className="container mx-auto">
-          <h2 className="text-blue-400 font-semibold text-5xl text-center mb-10">
+          <h2 className="text-blue-400 font-semibold text-3xl md:text-4xl lg:text-5xl text-center mb-6 md:mb-10">
             The Latest in Crypto
           </h2>
           <CryptoNews data={news} />
@@ -87,8 +84,8 @@ function App() {
       <div className="bg-zinc-950">
         <div className="container mx-auto">
           <div className="bg-zinc-950 py-8">
-            <div className="container mx-auto flex flex-col items-center px-5">
-              {/*search bar feature */}
+            <div className="container mx-auto flex flex-col items-center p-5">
+              {/* Search bar feature */}
               <label
                 htmlFor="cryptoSearch"
                 className="text-blue-400 text-lg mb-5 md:mr-4">
@@ -103,7 +100,7 @@ function App() {
               />
             </div>
           </div>
-          {/* Coindata */}
+          {/* Coin data */}
           <CoinTable data={filteredCoins} />
         </div>
       </div>
