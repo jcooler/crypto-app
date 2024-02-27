@@ -32,7 +32,7 @@ const Header = () => {
       <nav className="bg-zinc-950 p-2 sm:p-4 border-b-2 sm:border-b-4 border-quantum">
         <div className="mx-auto flex flex-col sm:flex-row justify-between items-center">
           <div className="flex items-center mb-2 sm:mb-0">
-            <div className="text-quantum font-bold text-base sm:text-lg lg:text-xl">
+            <div className="text-quantum font-bold text-base md:text-3xl lg:text-3xl">
               QuantumVista
             </div>
           </div>
@@ -47,7 +47,7 @@ const Header = () => {
         </div>
       </nav>
       {/* Add CryptoCarousel as a header carousel */}
-      <div className="bg-blue-950 p-4 md:p-2">
+      <div className="bg-gray-900 p-4 md:p-2">
         <CryptoCarousel cryptoData={cryptoData} />
       </div>
     </>

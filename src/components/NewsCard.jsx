@@ -18,13 +18,13 @@ const formatDate = (timestamp) => {
   return date.toLocaleDateString(undefined, options);
 };
 
-const NewsCard = ({ title, imgUrl, link, feedDate }) => {
+const NewsCard = ({ title, imgUrl, link, feedDate, source }) => {
   const isSmallScreen = useMediaQuery({ query: '(max-width: 640px)' });
 
   return (
     <div className="container mx-auto justify-center align-middle flex">
       <div className="bg-gray-900 overflow-hidden border-b-8 border-blue-300 w-full md:w-2/3 lg:w-1/2">
-        <img src={imgUrl} alt={title} className="w-full object-cover h-40 sm:h-48 md:h-56" />
+        <img src={imgUrl} alt={source} className="w-full object-cover h-40 sm:h-48 md:h-56" />
         <div className="p-4 md:p-6">
           <p className="text-blue-300 font-semibold text-xs mb-1 leading-none">News</p>
           <h3 className={`font-semibold mb-2 text-lg sm:text-xl leading-tight text-blue-500 ${isSmallScreen ? 'truncate' : 'text-2xl'}`}>

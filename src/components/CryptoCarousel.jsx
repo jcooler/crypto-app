@@ -1,9 +1,21 @@
 /* eslint-disable react/prop-types */
+import { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import ReactLoading from 'react-loading';
 
 const CryptoCarousel = ({ cryptoData }) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(delay);
+  }, []);
+
   const settings = {
     lazyLoad: true,
     arrows: false,
@@ -14,6 +26,7 @@ const CryptoCarousel = ({ cryptoData }) => {
     autoplaySpeed: 0,
     slidesToShow: 6,
     cssEase: 'linear',
+    draggable: false,
     responsive: [
       {
         breakpoint: 768,
@@ -32,41 +45,51 @@ const CryptoCarousel = ({ cryptoData }) => {
         settings: {
           slidesToShow: 3,
         },
-
       },
     ],
   };
 
   return (
-    <Slider {...settings}>
-      {cryptoData.map((crypto) => (
-        <div key={crypto.rank} className="px-1/2 sm:px-2/5">
-          <div className="flex items-center border-r border-blue-500 py-2 md:py-2">
-            {/* Left Column */}
-            <div className="flex-shrink-0">
-              <img
-                className="text-lg md:text-xl font-bold ml-1 h-8 w-8 md:h-10 md:w-10"
-                alt=""
-                src={crypto.icon}
-              />
-            </div>
-            <div className="ml-2 md:ml-4"> 
-              <p className="text-blue-400 font-semibold text-base md:text-lg">{crypto.name}</p>
-              <p className="text-blue-200 text-sm md:text-base">{`(${crypto.symbol})`}</p>
-            </div>
-            {/* Right Column */}
-            <div className="ml-4 md:ml-8"> 
-              <p className="text-blue-400 text-base md:text-lg"> ${parseFloat(crypto.price).toFixed(2)}</p>
-              <p
-                className={`text-blue-400 ${crypto.priceChange1d < 0 ? 'text-red-500' : 'text-green-500'} text-sm md:text-base`}
-              >
-                {crypto.priceChange1d}%
-              </p>
-            </div>
-          </div>
+    <div>
+      {loading ? (
+        // Display loader while carousel is loading
+        <div className="flex items-center justify-center">
+        <ReactLoading type="spin" color="#3498db" height={60} width={60} />
+        <div className="spinner"></div>
         </div>
-      ))}
-    </Slider>
+      ) : (
+        // Display carousel when it's done loading
+        <Slider {...settings}>
+          {cryptoData.map((crypto) => (
+            <div key={crypto.rank} className="px-1/2 sm:px-2/5">
+              <div className="flex items-center border-r border-blue-500 py-2 md:py-2">
+                {/* Left Column */}
+                <div className="flex-shrink-0">
+                  <img
+                    className="text-lg md:text-xl font-bold ml-1 h-8 w-8 md:h-10 md:w-10"
+                    alt=""
+                    src={crypto.icon}
+                  />
+                </div>
+                <div className="ml-2 md:ml-4">
+                  <p className="text-blue-400 font-semibold text-base md:text-lg">{crypto.name}</p>
+                  <p className="text-blue-200 text-sm md:text-base">{`(${crypto.symbol})`}</p>
+                </div>
+                {/* Right Column */}
+                <div className="ml-4 md:ml-8">
+                  <p className="text-blue-400 text-base md:text-lg">${parseFloat(crypto.price).toFixed(2)}</p>
+                  <p
+                    className={`text-blue-400 ${crypto.priceChange1d < 0 ? 'text-red-500' : 'text-green-500'} text-sm md:text-base`}
+                  >
+                    {crypto.priceChange1d}%
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </Slider>
+      )}
+    </div>
   );
 };
 
