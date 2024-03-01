@@ -20,7 +20,7 @@ const sections = [
 
 const Footer = () => {
   return (
-    <div className="w-full bg-gray-950 text-gray-300 py-y px-8">
+    <div className="w-full bg-gray-950 text-gray-300 py-10 px-8">
       <div className="max-w-[1240px] mx-auto grid grid-cols-2 md:grid-cols-6 border-b-2 border-gray-600 py-8">
         {sections.map((section, index) => (
           <div key={index}>
@@ -49,7 +49,7 @@ const Footer = () => {
               name="email"
               className="w-full p-2 mr-4 rounded-md mb-4 border-blue-400 border-2 focus:outline-none focus:border-blue-500 bg-gray-900 placeholder-blue-400 font-semibold"
               type="email"
-              placeholder="Enter email.."
+              placeholder="Email"
               aria-label="Enter email.."
             />
             <button className="p-2 mb-4 bg-gray-800 text-blue-400 rounded-md focus:outline-none hover:bg-gray-900 hover:outline transition duration-300">Subscribe</button>

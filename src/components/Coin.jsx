@@ -30,7 +30,7 @@ const Coin = ({ name, symbol, icon, volume, rank, price, priceChange1d }) => {
     <tr className="border-b border-blue-500">
       <td className="py-2 px-2 md:px-4 text-blue-500 text-center md:text-left md:flex">
         {`#${rank} `}
-        <img className="text-lg md:text-xl font-bold ml-1" alt="" src={icon} />
+        <img className="h-12 w-12 object-cover ml-2" alt="" src={icon} />
       </td>
       <td className="py-2 px-2 md:px-4 text-blue-500 text-center md:text-left">
         <div className="flex flex-col md:flex-row items-center md:items-start">
