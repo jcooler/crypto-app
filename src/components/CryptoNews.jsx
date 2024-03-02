@@ -30,7 +30,7 @@ function CryptoNews({ data }) {
       </div>
     );
   } else {
-    // Directly return the loading indicator when there's no data
+    
     return (
       <div className="flex justify-center items-center">
         <ReactLoading type="bars" color="#60a5fa" height={100} width={100} />

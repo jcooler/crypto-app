@@ -9,17 +9,17 @@ const CoinTable = ({ search }) => {
   const [allCoins, setAllCoins] = useState([]);
   const [displayedCoins, setDisplayedCoins] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // This could be adjusted if you want to show more/less items per page
+  const itemsPerPage = 10; 
   const [sortField, setSortField] = useState("rank");
   const [sortDirection, setSortDirection] = useState("asc");
-  const isSmallScreen = useMediaQuery({ maxWidth: 445 }); // Adjusted to consider tablets and large mobile devices
+  const isSmallScreen = useMediaQuery({ maxWidth: 445 }); 
   const [meta, setMeta] = useState({
     itemCount: 0,
     pageCount: 0,
     hasPreviousPage: false,
     hasNextPage: false,
   });
-  const [isLoading, setIsLoading] = useState(true); // Initialize isLoading state to true
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const fetchCoins = async () => {
@@ -38,7 +38,7 @@ const CoinTable = ({ search }) => {
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoading(false); // Stop loading when the data is fetched or on error
+        setIsLoading(false); 
       }
     };
 
