@@ -30,7 +30,7 @@ const CoinTable = ({ search }) => {
           params: { limit: "200" },
           headers: {
             accept: "application/json",
-            "X-API-KEY": "mjRnXJ0GFnNcxjZSslSZkZCCQNk/Vk2Zk7Os/JZM07c=",
+            'X-API-KEY': import.meta.env.VITE_API_KEY,
           },
         };
         const response = await axios.request(options);
