@@ -7,8 +7,11 @@ export default {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        'custom-blue': '0 4px 14px 0 rgba(59, 130, 246, 0.5)',
+      },
       colors: {
-        neonPurple: '#9400d3',
+        
       },
     },
   },

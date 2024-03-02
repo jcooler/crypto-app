@@ -18,7 +18,7 @@ const Coin = ({ name, symbol, icon, volume, rank, price, priceChange1d }) => {
   const priceChangeColor = priceChange1d < 0 ? 'text-red-500' : 'text-green-500';
 
   // Check if it's a small screen
-  const isSmallScreen = useMediaQuery({ maxWidth: 500 });
+  const isSmallScreen = useMediaQuery({ maxWidth: 768 });
 
   // Convert volume to a readable format
   const formattedVolume = formatVolume(volume, isSmallScreen);
@@ -30,7 +30,7 @@ const Coin = ({ name, symbol, icon, volume, rank, price, priceChange1d }) => {
     <tr className="border-b border-blue-500">
       <td className="py-2 px-2 md:px-4 text-blue-500 text-center md:text-left md:flex">
         {`#${rank} `}
-        <img className="h-12 w-12 object-cover ml-2" alt="" src={icon} />
+        <img className={`${isSmallScreen ? 'h-6 w-6' : 'h-12 w-12'} object-cover ml-2`} alt="" src={icon} />
       </td>
       <td className="py-2 px-2 md:px-4 text-blue-500 text-center md:text-left">
         <div className="flex flex-col md:flex-row items-center md:items-start">

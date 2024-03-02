@@ -50,6 +50,7 @@ const Footer = () => {
               className="w-full p-2 mr-4 rounded-md mb-4 border-blue-400 border-2 focus:outline-none focus:border-blue-500 bg-gray-900 placeholder-blue-400 font-semibold"
               type="email"
               placeholder="Email"
+              autoComplete="off"
               aria-label="Enter email.."
             />
             <button className="p-2 mb-4 bg-gray-800 text-blue-400 rounded-md focus:outline-none hover:bg-gray-900 hover:outline transition duration-300">Subscribe</button>

@@ -12,48 +12,6 @@ body, html {
   overflow-x: hidden; 
 }
 
-
-
-.coin-table-small {
-  position: relative;
-}
-
-.coin-table-small th,
-.coin-table-small td {
-  display: block;
-  text-align: center;
-}
-
-.coin-table-small th {
-  position: absolute;
-  top: -9999px;
-  left: -9999px;
-}
-
-.coin-table-small td {
-  border: none;
-  padding: 8px;
-  margin-bottom: 8px;
-}
-
-.coin-table-small tr {
-  border-bottom: 2px solid #3e4c59;
-}
-
-.coin-table-small img {
-  max-width: 100px;
-  height: auto;
-  display: inline-block;
-  margin-right: 8px;
-  vertical-align: middle;
-}
-
-.coin-table-small .coin-info {
-  display: flex;
-  text-align: left;
-  vertical-align: middle;
-}
-
 .skeleton-container {
   flex-direction: column;
   align-items: center;
@@ -74,15 +32,22 @@ body, html {
 }
 
 
+
+
+
+
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(23, 126, 252) transparent;
+}
+
 @layer components {
   .text-quantum {
     background: linear-gradient(to right, #6f00ff, #0099ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text; /* //* standard property for compatibility */
-  }
-  .shadow-quantum {
-    box-shadow: 0 12px 16px rgba(0, 140, 255, 0.274), 0 6px 12px rgba(255, 90, 0, 0.15);
   }
   .border-quantum {
     border-image: linear-gradient(to right, #6f00ff, #0099ff);

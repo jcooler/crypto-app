@@ -55,34 +55,31 @@ const CryptoCarousel = ({ cryptoData }) => {
   return (
     <div>
       {loading ? (
-        // Display loader while carousel is loading
         <div className="flex items-center justify-center">
-        <ReactLoading type="spin" color="#3498db" height={60} width={60} />
-        <div className="spinner"></div>
+          <ReactLoading type="bars" color="#60a5fa" height={58} width={58} />
         </div>
       ) : (
-        // Display carousel when it's done loading
         <Slider {...settings}>
           {cryptoData.map((crypto) => (
             <div key={crypto.rank}>
-              <div className="flex items-center border-r border-blue-500 py-2 md:py-2">
+              <div className="flex items-center border-r border-blue-500 py-2 px-2">
                 {/* Left Column */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 ml-2">
                   <img
-                    className="text-lg font-bold ml-1 h-8 w-8 md:h-10 md:w-10"
-                    alt=""
+                    className="h-6 w-6 md:h-8 md:w-8"
+                    alt={crypto.rank}
                     src={crypto.icon}
                   />
                 </div>
-                <div className="ml-2 md:ml-2 mr-20">
-                  <p className="text-blue-400 font-semibold text-base md:text-md">{crypto.name}</p>
-                  <p className="text-blue-200 text-sm md:text-base">{`(${crypto.symbol})`}</p>
+                <div className="ml-2">
+                  <p className="text-blue-400 font-semibold text-xs md:text-sm">{crypto.name}</p>
+                  <p className="text-blue-300 text-xs md:text-sm">{`(${crypto.symbol})`}</p>
                 </div>
                 {/* Right Column */}
-                <div className="ml-4 md:ml-2">
-                  <p className="text-blue-400 text-base md:text-md">${parseFloat(crypto.price).toFixed(2)}</p>
+                <div className="ml-2">
+                  <p className="text-blue-400 text-xs md:text-sm">${parseFloat(crypto.price).toFixed(2)}</p>
                   <p
-                    className={`text-blue-400 ${crypto.priceChange1d < 0 ? 'text-red-500' : 'text-green-500'} text-sm md:text-base`}
+                    className={`text-blue-400 ${crypto.priceChange1d < 0 ? 'text-red-500' : 'text-green-500'} text-xs md:text-sm`} // Adjusted text size
                   >
                     {crypto.priceChange1d}%
                   </p>
