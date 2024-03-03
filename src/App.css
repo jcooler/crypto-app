@@ -9,9 +9,9 @@
 
 @media (orientation: landscape) {
   html, body {
-    width: 100vw; 
+    width: 100%; 
     overflow-x: hidden; 
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
   }
 }
@@ -37,10 +37,18 @@ html, body {
     display: flex;
     flex-direction: column;
     height: 100vh; 
-    overflow-x: hidden
+    overflow-x: hidden;
+    margin: 0 auto;
   }
 }
 
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; 
+  overflow-x: hidden;
+  margin: 0 auto;
+}
 
 .skeleton-container {
   flex-direction: column;
