@@ -7,18 +7,37 @@
 }
 
 
+@media (orientation: landscape) {
+  html, body {
+    width: 100vw; 
+    overflow-x: hidden; 
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.slick-dots li.slick-active button:before {
+  color:rgb(0, 174, 255) !important;
+}
+
+.slick-dots li button:before {
+  color: rgb(85, 178, 255) !important;
+}
+
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
 }
 
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+@media (orientation: landscape) {
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 100% of the viewport height */
+  }
 }
 
 
@@ -40,12 +59,6 @@ html, body {
     background-color: #2c2c2c; 
   }
 }
-
-
-
-
-
-
 
 * {
   scrollbar-width: thin;

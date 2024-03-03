@@ -62,7 +62,7 @@ const CryptoCarousel = ({ cryptoData }) => {
         <Slider {...settings}>
           {cryptoData.map((crypto) => (
             <div key={crypto.rank}>
-              <div className="flex items-center border-r border-blue-500 py-2 px-2">
+              <div className="flex items-center border-r border-blue-500 py-2 px-2 container mx-auto">
                 {/* Left Column */}
                 <div className="flex-shrink-0 ml-2">
                   <img

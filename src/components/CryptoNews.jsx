@@ -9,7 +9,7 @@ function CryptoNews({ data }) {
   const settings = {
     lazyLoad: true,
     arrows: false,
-    dots: false,
+    dots: true,
     infinite: true,
     autoplay: true,
     autoplaySpeed: 8000,
@@ -21,7 +21,7 @@ function CryptoNews({ data }) {
 
   if (data.length > 0) {
     return (
-      <div className="slider-container">
+      <div className="slider-container container">
         <Slider {...settings}>
           {data.map((newsData, index) => (
             <NewsCard key={index} {...newsData} />

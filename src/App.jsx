@@ -40,13 +40,13 @@ function App() {
       <Header />
       <div className="bg-gray-950 p-4 md:p-8 lg:p-12 xl:p-16 2xl:p-20 flex items-center justify-center lg:min-h-screen">
         <div className="relative py-10 md:py-20 lg:py-28 xl:py-36 2xl:py-44 px-4 md:px-8 lg:px-12 xl:px-16 rounded-lg bg-opacity-25 shadow-custom-blue w-full md:w-4/5 lg:w-3/4 xl:w-2/3 mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-quantum mb-6 md:mb-8">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-quantum mb-6 md:mb-8 animate__slideInLeft">
             QuantumVista
           </h1>
-          <h2 className="text-xl md:text-3xl lg:text-4xl xl:text-5xl text-blue-500 font-semibold mb-4 md:mb-6">
+          <h2 className="text-xl md:text-3xl lg:text-4xl xl:text-5xl text-blue-500 font-semibold mb-4 md:mb-6 animate__slideInLeft">
             The #1 crypto web app
           </h2>
-          <p className="text-md md:text-lg lg:text-xl xl:text-2xl text-blue-500 mb-6 md:mb-8">
+          <p className="text-md md:text-lg lg:text-xl xl:text-2xl text-blue-500 mb-6 md:mb-8 animate__slideInRight">
             QuantumVista is the fastest way to get the latest crypto news and
             all things cryptocurrency.
           </p>
@@ -57,12 +57,12 @@ function App() {
                 id="email"
                 autoComplete="off"
                 placeholder="Your Email"
-                className="py-2 px-4 w-full sm:w-auto rounded-lg border-2 border-blue-500 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 placeholder-blue-300 text-white font-medium"
+                className="animate__slideInLeft py-2 px-4 w-full sm:w-auto rounded-lg border-2 border-blue-500 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 placeholder-blue-300 text-white font-medium"
                 aria-label="Your Email"
               />
               <button
                 type="submit"
-                className=" py-2.5 px-6 bg-gray-800 text-blue-400 rounded-md focus:outline-none hover:bg-gray-900 hover:outline transition duration-300">
+                className=" animate__slideInRight py-2.5 px-6 bg-gray-800 text-blue-400 rounded-md focus:outline-none hover:bg-gray-900 hover:outline transition duration-300">
                 Notify Me
               </button>
             </div>
@@ -72,7 +72,7 @@ function App() {
 
       <div className="bg-zinc-950">
         <div className="container mx-auto">
-          <h2 className="text-blue-400 font-semibold text-3xl md:text-4xl lg:text-5xl text-center mb-6 md:mb-10">
+          <h2 className="text-blue-400 font-semibold text-3xl md:text-4xl lg:text-5xl text-center mb-6 md:mb-10 animate__slideInLeft">
             The Latest in Crypto
           </h2>
           <CryptoNews data={news} />
