@@ -36,7 +36,8 @@ html, body {
   #app {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* 100% of the viewport height */
+    height: 100vh; 
+    overflow-x: hidden
   }
 }
 

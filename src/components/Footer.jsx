@@ -23,7 +23,7 @@ const Footer = () => {
     <div className="w-full bg-gray-950 text-gray-300 py-10 px-8">
       <div className="max-w-[1240px] mx-auto grid grid-cols-2 md:grid-cols-6 border-b-2 border-gray-600 py-8">
         {sections.map((section, index) => (
-          <div key={index}>
+          <div key={index} className="px-8">
             <h2 className="font-bold uppercase pt-2">{section.title}</h2>
             <ul>
               {section.items.map((item, i) => (
