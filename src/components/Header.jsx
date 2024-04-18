@@ -14,7 +14,7 @@ const Header = () => {
             params: { limit: '10' },
             headers: {
               accept: 'application/json',
-              'X-API-KEY': 'mjRnXJ0GFnNcxjZSslSZkZCCQNk/Vk2Zk7Os/JZM07c=',
+              'X-API-KEY': import.meta.env.VITE_API_KEY,
             },
           }
         );
@@ -29,25 +29,25 @@ const Header = () => {
 
   return (
     <>
-      <nav className="bg-zinc-950 p-2 sm:p-4 border-b-2 sm:border-b-4 border-quantum">
-        <div className="mx-auto flex flex-col sm:flex-row justify-between items-center">
+      <nav className="p-2 border-b-2 bg-zinc-950 sm:p-4 sm:border-b-4 border-quantum">
+        <div className="flex flex-col items-center justify-between mx-auto sm:flex-row">
           <div className="flex items-center mb-2 sm:mb-0">
-            <div className="text-quantum font-bold text-base md:text-3xl lg:text-3xl">
+            <div className="text-base font-bold text-quantum md:text-3xl lg:text-3xl">
               QuantumVista
             </div>
           </div>
-          <ul className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 justify-center">
-            <li className="p-2 sm:p-4 text-blue-400 font-semibold rounded-full h-10 sm:h-12 flex justify-center items-center">
+          <ul className="flex flex-col justify-center space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4">
+            <li className="flex items-center justify-center h-10 p-2 font-semibold text-blue-400 rounded-full sm:p-4 sm:h-12">
               Log In
             </li>
-            <li className="p-2 sm:p-4 text-blue-400 font-semibold rounded-full h-10 sm:h-12 flex justify-center items-center border-blue-400 border-2">
+            <li className="flex items-center justify-center h-10 p-2 font-semibold text-blue-400 border-2 border-blue-400 rounded-full sm:p-4 sm:h-12">
               Create Account
             </li>
           </ul>
         </div>
       </nav>
       {/* Add CryptoCarousel as a header carousel */}
-      <div className="bg-gray-900 p-4 md:p-2">
+      <div className="p-4 bg-gray-900 md:p-2">
         <CryptoCarousel cryptoData={cryptoData} />
       </div>
     </>
