@@ -23,7 +23,7 @@ function App() {
             Skip to content
           </a>
           <Header />
-          <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 sm:px-6">
+          <main id="main" className="w-full flex-1">
             <Suspense fallback={<div className="py-24" aria-busy="true" />}>
               <Routes>
                 <Route path="/" element={<Dashboard />} />

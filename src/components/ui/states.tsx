@@ -38,17 +38,21 @@ export function EmptyState({ title, detail }: { title: string; detail?: string }
 export function SectionHeading({
   label,
   title,
+  id,
   children,
 }: {
   label: string;
   title: string;
+  id?: string;
   children?: ReactNode;
 }) {
   return (
     <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
       <div>
         <p className="microlabel mb-1">{label}</p>
-        <h2 className="text-xl font-semibold tracking-tight text-body">{title}</h2>
+        <h2 id={id} className="text-xl font-semibold tracking-tight text-body">
+          {title}
+        </h2>
       </div>
       {children}
     </div>
