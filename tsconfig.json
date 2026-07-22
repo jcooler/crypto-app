@@ -15,9 +15,11 @@
     "noUncheckedIndexedAccess": true,
 
     "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
     "noEmit": true
   },
-  "include": ["src", "netlify/functions", "vite.config.ts"]
+  "include": ["src", "server", "netlify/functions", "vite.config.ts"]
 }
+
