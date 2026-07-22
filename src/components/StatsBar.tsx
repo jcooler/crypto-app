@@ -38,14 +38,14 @@ function Stat({
   change: number | null;
 }) {
   return (
-    <div className="flex shrink-0 flex-col gap-1 px-4 py-3 first:pl-0 sm:px-6">
+    <div className="flex items-center justify-between gap-3 py-2.5 sm:flex-col sm:shrink-0 sm:items-start sm:justify-center sm:gap-1 sm:px-6 sm:py-3 sm:first:pl-0">
       <span className="microlabel whitespace-nowrap">{label}</span>
       <span className="flex h-7 items-baseline gap-2">
         {value === undefined ? (
           <Skeleton width={140} height={20} />
         ) : (
           <>
-            <span className="tabular whitespace-nowrap text-lg font-semibold tracking-tight text-body">
+            <span className="tabular whitespace-nowrap text-base font-semibold tracking-tight text-body sm:text-lg">
               <NumberFlow value={value} format={format} suffix={suffix} />
             </span>
             <ChangeChip value={change} />
@@ -82,13 +82,8 @@ export default function StatsBar() {
 
   return (
     <section aria-label="Global market statistics">
-      {/* horizontally scrollable on narrow screens, so it must be focusable */}
-      <div
-        tabIndex={0}
-        role="group"
-        aria-label="Market statistics"
-        className="relative flex divide-x overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:hairline"
-      >
+      {/* stacked rows on phones; horizontal strip with hairline dividers from sm up */}
+      <div className="divide-y sm:flex sm:divide-y-0 sm:divide-x [&>*]:hairline">
         <Stat
           label="Total market cap"
           value={g?.marketCap}

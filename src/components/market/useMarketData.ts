@@ -87,6 +87,13 @@ export function useSparklinesFor(
       queryFn: () => fetchSparklines(ids),
       staleTime: 3_600_000,
       gcTime: 3_600_000,
+      // keep polling gently until every coin in the chunk has a sparkline
+      // (partial batches happen when the upstream rate limit blips)
+      refetchInterval: (query: { state: { data?: SparklineMap } }) => {
+        const data = query.state.data;
+        if (!data) return false;
+        return ids.every((id) => (data[id]?.length ?? 0) > 1) ? false : 30_000;
+      },
     })),
   });
 

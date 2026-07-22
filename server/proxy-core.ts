@@ -158,11 +158,33 @@ async function proxyOne(
   }
 }
 
+// Serializes upstream chart fetches across ALL concurrent sparkline batches so
+// two in-flight batch requests can't jointly exceed the 2 req/s upstream limit.
+let chartQueue: Promise<void> = Promise.resolve();
+const pacedChartFetch = (
+  path: string,
+  params: URLSearchParams,
+  apiKey: string | undefined,
+): Promise<ProxyResult> => {
+  const run = chartQueue.then(async () => {
+    const res = await proxyOne(path, params, apiKey);
+    const hitUpstream =
+      apiKey && res.headers["x-qv-cache"] !== "hit" && res.headers["x-qv-data"] !== "fixture";
+    if (hitUpstream) await new Promise((r) => setTimeout(r, 550));
+    return res;
+  });
+  chartQueue = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+};
+
 /** Fetch 7d charts for several coins, respecting the 2 req/s upstream limit. */
 async function sparklines(
   params: URLSearchParams,
   apiKey: string | undefined,
-): Promise<ProxyResult> {
+): Promise<ProxyResult & { complete: boolean }> {
   const ids = (params.get("ids") ?? "")
     .split(",")
     .map((s) => s.trim())
@@ -173,42 +195,42 @@ async function sparklines(
       status: 400,
       body: JSON.stringify({ error: "ids required" }),
       headers: { "content-type": "application/json" },
+      complete: true,
     };
   }
   const out: Record<string, [number, number][]> = {};
   let anyFixture = false;
   for (const id of ids) {
     const p = new URLSearchParams({ period: "1w" });
-    const res = await proxyOne(`coins/${id}/charts`, p, apiKey);
-    if (res.status === 200) {
-      if (res.headers["x-qv-data"] === "fixture") anyFixture = true;
-      try {
-        const data = JSON.parse(res.body) as unknown;
-        const arr = Array.isArray(data)
-          ? data
-          : ((data as { chart?: unknown }).chart ?? []);
-        if (Array.isArray(arr)) {
-          out[id] = (arr as number[][])
-            .filter((pt) => Array.isArray(pt) && pt.length >= 2)
-            .map((pt) => [pt[0]!, pt[1]!]);
-        }
-      } catch {
-        // skip malformed chart
+    const res = await pacedChartFetch(`coins/${id}/charts`, p, apiKey);
+    if (res.status !== 200) continue;
+    if (res.headers["x-qv-data"] === "fixture") anyFixture = true;
+    try {
+      const data = JSON.parse(res.body) as unknown;
+      const arr = Array.isArray(data) ? data : ((data as { chart?: unknown }).chart ?? []);
+      if (Array.isArray(arr)) {
+        out[id] = (arr as number[][])
+          .filter((pt) => Array.isArray(pt) && pt.length >= 2)
+          .map((pt) => [pt[0]!, pt[1]!]);
       }
-      // stay under 2 req/s when we actually hit upstream (cache hits are instant)
-      if (apiKey && !anyFixture && res.headers["x-qv-cache"] !== "hit")
-        await new Promise((r) => setTimeout(r, 550));
+    } catch {
+      // skip malformed chart
     }
   }
+  // A batch missing some coins (rate limit blip, upstream error) must not be
+  // cached for hours — short TTL lets the client's retry fill the gaps.
+  const complete = ids.every((id) => (out[id]?.length ?? 0) > 1);
+  const ttl = complete ? 7200 : 60;
   return {
     status: 200,
     body: JSON.stringify(out),
     headers: {
       "content-type": "application/json; charset=utf-8",
-      "netlify-cdn-cache-control": "public, s-maxage=7200, stale-while-revalidate=86400",
+      "netlify-cdn-cache-control": `public, s-maxage=${ttl}, stale-while-revalidate=${ttl * 12}`,
       "cache-control": "public, max-age=0, must-revalidate",
       ...(anyFixture ? { "x-qv-data": "fixture" } : {}),
     },
+    complete,
   };
 }
 
@@ -228,9 +250,9 @@ export async function handleApiRequest(
     const ck = params.toString();
     const hit = sparkCache.get(ck);
     if (hit && hit.expires > Date.now()) return hit.res;
-    const res = await sparklines(params, key);
+    const { complete, ...res } = await sparklines(params, key);
     if (res.status === 200) {
-      sparkCache.set(ck, { expires: Date.now() + 7200_000, res });
+      sparkCache.set(ck, { expires: Date.now() + (complete ? 7200_000 : 60_000), res });
     }
     return res;
   }

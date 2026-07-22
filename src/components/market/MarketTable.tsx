@@ -1,5 +1,4 @@
-import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { memo, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { Link, useNavigate } from "react-router-dom";
 import { prefetchCoin, useCoins } from "../../api/queries.ts";
@@ -17,6 +16,8 @@ import {
   type SortField,
   type SortState,
 } from "./useMarketData.ts";
+
+const PAGE_SIZE = 20;
 
 function PercentCell({ value }: { value: number | null }) {
   const change = formatPercent(value);
@@ -138,7 +139,13 @@ const CoinRow = memo(function CoinRow({
       </td>
       <td className="hidden px-3 pr-4 sm:table-cell">
         <span className="flex justify-end">
-          <Sparkline points={sparkline} direction={trend7d} />
+          {sparkline && sparkline.length > 1 ? (
+            <Sparkline points={sparkline} direction={trend7d} />
+          ) : (
+            <span className="flex h-8 w-[100px] items-center justify-end" aria-hidden="true">
+              <Skeleton width={100} height={16} />
+            </span>
+          )}
         </span>
       </td>
     </tr>
@@ -152,7 +159,7 @@ const CoinCard = memo(function CoinCard({ coin }: { coin: Coin }) {
         to={`/coin/${coin.id}`}
         onFocus={() => prefetchCoin(coin.id)}
         onTouchStart={() => prefetchCoin(coin.id)}
-        className="flex items-center gap-3 border-b hairline px-4 py-3 transition-colors last:border-b-0 hover:bg-surface-2"
+        className="flex items-center gap-3 border-b hairline px-4 py-3 transition-colors hover:bg-surface-2"
       >
         <span className="tabular w-6 shrink-0 text-xs text-muted">{coin.rank}</span>
         <img src={coin.icon} alt="" width={28} height={28} className="rounded-full" loading="lazy" />
@@ -188,47 +195,69 @@ function TableSkeleton() {
   );
 }
 
-const ESTIMATED_ROW = 56;
+function Pagination({
+  page,
+  pageCount,
+  total,
+  onPage,
+}: {
+  page: number;
+  pageCount: number;
+  total: number;
+  onPage: (p: number) => void;
+}) {
+  if (pageCount <= 1) return null;
+  const from = (page - 1) * PAGE_SIZE + 1;
+  const to = Math.min(page * PAGE_SIZE, total);
+  const buttonCls =
+    "rounded-lg border hairline bg-surface-2 px-3 py-1.5 font-mono text-xs font-medium text-body transition-colors hover:border-accent/40 hover:text-accent disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-inherit disabled:hover:text-body";
+  return (
+    <nav
+      aria-label="Table pages"
+      className="flex items-center justify-between gap-3 border-t hairline px-4 py-3"
+    >
+      <p className="font-mono text-[11px] text-muted">
+        {from}–{to} <span aria-hidden="true">/</span>
+        <span className="sr-only">of</span> {total}
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onPage(page - 1)}
+          disabled={page <= 1}
+          className={buttonCls}
+        >
+          <span aria-hidden="true">←</span> Prev
+        </button>
+        <span className="tabular px-1 font-mono text-xs text-muted">
+          {page} / {pageCount}
+        </span>
+        <button
+          type="button"
+          onClick={() => onPage(page + 1)}
+          disabled={page >= pageCount}
+          className={buttonCls}
+        >
+          Next <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </nav>
+  );
+}
 
-function VirtualizedTable({
-  coins,
+function DataTable({
+  pageRows,
   allCoins,
   sort,
   onSort,
 }: {
-  coins: Coin[];
+  pageRows: Coin[];
   allCoins: Coin[];
   sort: SortState;
   onSort: (f: SortField) => void;
 }) {
   const navigate = useNavigate();
-  const bodyRef = useRef<HTMLTableSectionElement>(null);
-  const [scrollMargin, setScrollMargin] = useState(0);
-
-  useLayoutEffect(() => {
-    const el = bodyRef.current;
-    if (el) setScrollMargin(el.getBoundingClientRect().top + window.scrollY);
-  }, [coins.length]);
-
-  const virtualizer = useWindowVirtualizer({
-    count: coins.length,
-    estimateSize: () => ESTIMATED_ROW,
-    overscan: 8,
-    scrollMargin,
-  });
-
-  const items = virtualizer.getVirtualItems();
-  const visibleCoins = useMemo(
-    () => items.map((v) => coins[v.index]).filter((c): c is Coin => Boolean(c)),
-    [items, coins],
-  );
-  const sparklines = useSparklinesFor(allCoins, visibleCoins);
-
-  const paddingTop = items.length > 0 ? items[0]!.start - virtualizer.options.scrollMargin : 0;
-  const paddingBottom =
-    items.length > 0
-      ? virtualizer.getTotalSize() - (items[items.length - 1]!.end - virtualizer.options.scrollMargin)
-      : 0;
+  const sparklines = useSparklinesFor(allCoins, pageRows);
 
   return (
     <table className="w-full border-collapse">
@@ -246,25 +275,15 @@ function VirtualizedTable({
           </th>
         </tr>
       </thead>
-      <tbody ref={bodyRef}>
-        {paddingTop > 0 ? (
-          <tr aria-hidden="true" style={{ height: paddingTop }} />
-        ) : null}
-        {items.map((v) => {
-          const coin = coins[v.index];
-          if (!coin) return null;
-          return (
-            <CoinRow
-              key={coin.id}
-              coin={coin}
-              sparkline={sparklines[coin.id]}
-              onNavigate={(id) => navigate(`/coin/${id}`)}
-            />
-          );
-        })}
-        {paddingBottom > 0 ? (
-          <tr aria-hidden="true" style={{ height: paddingBottom }} />
-        ) : null}
+      <tbody>
+        {pageRows.map((coin) => (
+          <CoinRow
+            key={coin.id}
+            coin={coin}
+            sparkline={sparklines[coin.id]}
+            onNavigate={(id) => navigate(`/coin/${id}`)}
+          />
+        ))}
       </tbody>
     </table>
   );
@@ -274,16 +293,35 @@ export default function MarketTable() {
   const { data: coins, isPending, isError, refetch, dataUpdatedAt } = useCoins();
   const { sort, toggle } = useSort();
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const debouncedSearch = useDebouncedValue(search, 250);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+  const sectionRef = useRef<HTMLElement>(null);
 
   const rows = useMemo(
     () => filterAndSort(coins ?? [], debouncedSearch, sort),
     [coins, debouncedSearch, sort],
   );
+  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const clampedPage = Math.min(page, pageCount);
+  const pageRows = rows.slice((clampedPage - 1) * PAGE_SIZE, clampedPage * PAGE_SIZE);
+
+  // new search or sort → back to the first page
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, sort]);
+
+  const goToPage = (next: number) => {
+    setPage(Math.min(Math.max(1, next), pageCount));
+    sectionRef.current?.scrollIntoView({ block: "start" });
+  };
 
   return (
-    <section aria-labelledby="market-heading" className="pt-10">
+    <section
+      ref={sectionRef}
+      aria-labelledby="market-heading"
+      className="scroll-mt-16 pt-10"
+    >
       <SectionHeading id="market-heading" label="Markets" title="Top 100 by market cap">
         <div className="flex items-center gap-4">
           <LastUpdated updatedAt={dataUpdatedAt} />
@@ -328,14 +366,24 @@ export default function MarketTable() {
             title={`No coins match “${debouncedSearch}”`}
             detail="Try a different name or ticker symbol."
           />
-        ) : isDesktop ? (
-          <VirtualizedTable coins={rows} allCoins={coins ?? []} sort={sort} onSort={toggle} />
         ) : (
-          <ul className="list-none">
-            {rows.map((coin) => (
-              <CoinCard key={coin.id} coin={coin} />
-            ))}
-          </ul>
+          <>
+            {isDesktop ? (
+              <DataTable pageRows={pageRows} allCoins={coins ?? []} sort={sort} onSort={toggle} />
+            ) : (
+              <ul className="list-none">
+                {pageRows.map((coin) => (
+                  <CoinCard key={coin.id} coin={coin} />
+                ))}
+              </ul>
+            )}
+            <Pagination
+              page={clampedPage}
+              pageCount={pageCount}
+              total={rows.length}
+              onPage={goToPage}
+            />
+          </>
         )}
       </div>
     </section>
