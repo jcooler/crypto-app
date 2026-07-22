@@ -40,9 +40,9 @@ function Stat({
   return (
     <div className="flex shrink-0 flex-col gap-1 px-4 py-3 first:pl-0 sm:px-6">
       <span className="microlabel whitespace-nowrap">{label}</span>
-      <span className="flex items-baseline gap-2">
+      <span className="flex h-7 items-baseline gap-2">
         {value === undefined ? (
-          <Skeleton width={96} height={20} />
+          <Skeleton width={140} height={20} />
         ) : (
           <>
             <span className="tabular whitespace-nowrap text-lg font-semibold tracking-tight text-body">

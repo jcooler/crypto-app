@@ -16,7 +16,7 @@ const Arrow = ({ direction }: { direction: "up" | "down" | "flat" }) =>
 const TickerItem = memo(function TickerItem({ coin }: { coin: Coin }) {
   const change = formatPercent(coin.priceChange1d);
   return (
-    <span className="flex items-center gap-2 border-r hairline px-5 py-2">
+    <span className="flex h-9 items-center gap-2 border-r hairline px-5">
       <img src={coin.icon} alt="" width={16} height={16} className="rounded-full" />
       <span className="font-mono text-xs font-medium text-body">{coin.symbol}</span>
       <span className="tabular text-xs text-muted">{formatPrice(coin.price)}</span>
@@ -64,9 +64,9 @@ export default function Ticker() {
   return (
     <div aria-hidden="true" className="marquee overflow-hidden border-b hairline bg-surface">
       {coins.length === 0 ? (
-        <div className="flex gap-8 px-5 py-2">
+        <div className="flex h-9 items-center gap-8 px-5">
           {Array.from({ length: 12 }, (_, i) => (
-            <Skeleton key={i} width={150} height={16} />
+            <Skeleton key={i} width={150} height={14} />
           ))}
         </div>
       ) : (
