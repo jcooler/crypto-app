@@ -1,11 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>QuantumVista - The Future of Cryptocurrency</title>
-    <meta name="description" content="QuantumVista, the best crypto news source">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>QuantumVista — Live crypto markets</title>
+    <meta
+      name="description"
+      content="Live cryptocurrency prices, market data, charts, and news. Track the top coins with real-time updates."
+    />
+    <script>
+      // set theme before first paint: stored choice wins, then OS preference,
+      // then dark (the default)
+      (function () {
+        try {
+          var stored = localStorage.getItem("qv-theme");
+          var dark = stored
+            ? stored === "dark"
+            : !window.matchMedia("(prefers-color-scheme: light)").matches;
+          document.documentElement.classList.toggle("dark", dark);
+        } catch (e) {
+          /* keep dark default */
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

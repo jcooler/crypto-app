@@ -1,0 +1,149 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   QuantumVista tokens — RGB triplets so Tailwind can apply alpha.
+   Dark is the default theme; `.dark` is set on <html> before first paint.
+--------------------------------------------------------------------------- */
+:root {
+  /* light */
+  --bg: 246 246 249;
+  --surface: 255 255 255;
+  --surface-2: 249 249 252;
+  --border: 22 22 32;
+  --border-alpha: 0.1;
+  --text: 23 23 31;
+  --muted: 84 84 106;
+  --accent: 79 70 229; /* indigo-600 */
+  --accent-soft: 99 102 241;
+  --up: 4 120 87; /* emerald-700 */
+  --down: 185 28 28; /* red-700 */
+  --skeleton-base: #e4e4ec;
+  --skeleton-highlight: #f5f5fa;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: 10 10 15;
+  --surface: 17 17 24;
+  --surface-2: 23 23 31;
+  --border: 255 255 255;
+  --border-alpha: 0.09;
+  --text: 237 237 242;
+  --muted: 160 160 178;
+  --accent: 139 140 250; /* indigo-400, AA on near-black */
+  --accent-soft: 129 130 245;
+  --up: 52 211 153; /* emerald-400 */
+  --down: 248 113 113; /* red-400 */
+  --skeleton-base: #1b1b25;
+  --skeleton-highlight: #262632;
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-app text-body antialiased;
+    font-family: "Inter Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-feature-settings: "cv11";
+  }
+
+  /* every interactive element gets the same high-contrast focus ring */
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: rgb(var(--accent) / 0.28);
+  }
+}
+
+@layer components {
+  /* signature: mono micro-labels in the terminal register */
+  .microlabel {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    @apply text-[11px] font-medium uppercase tracking-[0.14em] text-muted;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hairline {
+    border-color: rgb(var(--border) / var(--border-alpha));
+  }
+
+  .surface-panel {
+    @apply rounded-xl border bg-surface hairline;
+  }
+}
+
+/* react-loading-skeleton — theme-aware via tokens */
+.react-loading-skeleton {
+  --base-color: var(--skeleton-base);
+  --highlight-color: var(--skeleton-highlight);
+}
+
+/* ---------------------------------------------------------------------------
+   Ticker marquee. The track holds the coin list twice; animating to -50%
+   loops seamlessly. Animation lives on a wrapper that never remounts —
+   data refreshes only swap text inside the items.
+--------------------------------------------------------------------------- */
+@keyframes qv-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: qv-marquee var(--marquee-duration, 60s) linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+
+/* live pulse dot next to "last updated" */
+@keyframes qv-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.8);
+  }
+}
+
+.pulse-dot {
+  animation: qv-pulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+  .pulse-dot {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
