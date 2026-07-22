@@ -2,20 +2,13 @@ import { memo, useEffect, useMemo, useRef, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { Link, useNavigate } from "react-router-dom";
 import { prefetchCoin, useCoins } from "../../api/queries.ts";
-import type { Coin, SparklineMap } from "../../api/types.ts";
+import type { Coin } from "../../api/types.ts";
 import { formatCompactCurrency, formatPercent, formatPrice } from "../../lib/format.ts";
 import { useDebouncedValue } from "../../lib/useDebouncedValue.ts";
 import { useMediaQuery } from "../../lib/useMediaQuery.ts";
 import LastUpdated from "../LastUpdated.tsx";
 import { EmptyState, ErrorState, SectionHeading } from "../ui/states.tsx";
-import Sparkline from "./Sparkline.tsx";
-import {
-  filterAndSort,
-  useSort,
-  useSparklinesFor,
-  type SortField,
-  type SortState,
-} from "./useMarketData.ts";
+import { filterAndSort, useSort, type SortField, type SortState } from "./useMarketData.ts";
 
 const PAGE_SIZE = 20;
 
@@ -88,14 +81,11 @@ function SortHeader({
 
 const CoinRow = memo(function CoinRow({
   coin,
-  sparkline,
   onNavigate,
 }: {
   coin: Coin;
-  sparkline: SparklineMap[string] | undefined;
   onNavigate: (id: string) => void;
 }) {
-  const trend7d = formatPercent(coin.priceChange1w).direction;
   return (
     <tr
       onClick={() => onNavigate(coin.id)}
@@ -134,19 +124,8 @@ const CoinRow = memo(function CoinRow({
       <td className="tabular hidden px-3 text-right text-sm text-body md:table-cell">
         {formatCompactCurrency(coin.marketCap)}
       </td>
-      <td className="tabular hidden px-3 text-right text-sm text-muted xl:table-cell">
+      <td className="tabular hidden px-3 pr-4 text-right text-sm text-muted xl:table-cell">
         {formatCompactCurrency(coin.volume)}
-      </td>
-      <td className="hidden px-3 pr-4 sm:table-cell">
-        <span className="flex justify-end">
-          {sparkline && sparkline.length > 1 ? (
-            <Sparkline points={sparkline} direction={trend7d} />
-          ) : (
-            <span className="flex h-8 w-[100px] items-center justify-end" aria-hidden="true">
-              <Skeleton width={100} height={16} />
-            </span>
-          )}
-        </span>
       </td>
     </tr>
   );
@@ -247,22 +226,19 @@ function Pagination({
 
 function DataTable({
   pageRows,
-  allCoins,
   sort,
   onSort,
 }: {
   pageRows: Coin[];
-  allCoins: Coin[];
   sort: SortState;
   onSort: (f: SortField) => void;
 }) {
   const navigate = useNavigate();
-  const sparklines = useSparklinesFor(allCoins, pageRows);
 
   return (
     <table className="w-full border-collapse">
       <caption className="sr-only">
-        Cryptocurrency market data: prices, changes, market cap, volume, and 7-day trend.
+        Cryptocurrency market data: prices, changes, market cap, and volume.
         Column headers sort the table.
       </caption>
       <thead>
@@ -270,19 +246,11 @@ function DataTable({
           {COLUMNS.map((col) => (
             <SortHeader key={col.field} column={col} sort={sort} onSort={onSort} />
           ))}
-          <th scope="col" className="hidden px-3 pr-4 text-right sm:table-cell">
-            <span className="microlabel">7d chart</span>
-          </th>
         </tr>
       </thead>
       <tbody>
         {pageRows.map((coin) => (
-          <CoinRow
-            key={coin.id}
-            coin={coin}
-            sparkline={sparklines[coin.id]}
-            onNavigate={(id) => navigate(`/coin/${id}`)}
-          />
+          <CoinRow key={coin.id} coin={coin} onNavigate={(id) => navigate(`/coin/${id}`)} />
         ))}
       </tbody>
     </table>
@@ -369,7 +337,7 @@ export default function MarketTable() {
         ) : (
           <>
             {isDesktop ? (
-              <DataTable pageRows={pageRows} allCoins={coins ?? []} sort={sort} onSort={toggle} />
+              <DataTable pageRows={pageRows} sort={sort} onSort={toggle} />
             ) : (
               <ul className="list-none">
                 {pageRows.map((coin) => (

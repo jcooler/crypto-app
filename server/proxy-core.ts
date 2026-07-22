@@ -158,86 +158,6 @@ async function proxyOne(
   }
 }
 
-// Serializes upstream chart fetches across ALL concurrent sparkline batches so
-// two in-flight batch requests can't jointly exceed the 2 req/s upstream limit.
-let chartQueue: Promise<void> = Promise.resolve();
-const pacedChartFetch = (
-  path: string,
-  params: URLSearchParams,
-  apiKey: string | undefined,
-): Promise<ProxyResult> => {
-  const run = chartQueue.then(async () => {
-    const res = await proxyOne(path, params, apiKey);
-    const hitUpstream =
-      apiKey && res.headers["x-qv-cache"] !== "hit" && res.headers["x-qv-data"] !== "fixture";
-    if (hitUpstream) await new Promise((r) => setTimeout(r, 550));
-    return res;
-  });
-  chartQueue = run.then(
-    () => undefined,
-    () => undefined,
-  );
-  return run;
-};
-
-/** Fetch 7d charts for several coins, respecting the 2 req/s upstream limit. */
-async function sparklines(
-  params: URLSearchParams,
-  apiKey: string | undefined,
-): Promise<ProxyResult & { complete: boolean }> {
-  const ids = (params.get("ids") ?? "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter((s) => /^[\w-]+$/.test(s))
-    .slice(0, 12);
-  if (ids.length === 0) {
-    return {
-      status: 400,
-      body: JSON.stringify({ error: "ids required" }),
-      headers: { "content-type": "application/json" },
-      complete: true,
-    };
-  }
-  const out: Record<string, [number, number][]> = {};
-  let anyFixture = false;
-  for (const id of ids) {
-    const p = new URLSearchParams({ period: "1w" });
-    const res = await pacedChartFetch(`coins/${id}/charts`, p, apiKey);
-    if (res.status !== 200) continue;
-    if (res.headers["x-qv-data"] === "fixture") anyFixture = true;
-    try {
-      const data = JSON.parse(res.body) as unknown;
-      const arr = Array.isArray(data) ? data : ((data as { chart?: unknown }).chart ?? []);
-      if (Array.isArray(arr)) {
-        out[id] = (arr as number[][])
-          .filter((pt) => Array.isArray(pt) && pt.length >= 2)
-          .map((pt) => [pt[0]!, pt[1]!]);
-      }
-    } catch {
-      // skip malformed chart
-    }
-  }
-  // A batch missing some coins (rate limit blip, upstream error) must not be
-  // cached for hours — short TTL lets the client's retry fill the gaps.
-  const complete = ids.every((id) => (out[id]?.length ?? 0) > 1);
-  const ttl = complete ? 7200 : 60;
-  return {
-    status: 200,
-    body: JSON.stringify(out),
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "netlify-cdn-cache-control": `public, s-maxage=${ttl}, stale-while-revalidate=${ttl * 12}`,
-      "cache-control": "public, max-age=0, must-revalidate",
-      ...(anyFixture ? { "x-qv-data": "fixture" } : {}),
-    },
-    complete,
-  };
-}
-
-// Sparkline chart entries are cached by proxyOne for 300s; bump that for the
-// batched 1w charts by overriding TTL via a longer-lived layer here.
-const sparkCache = new Map<string, { expires: number; res: ProxyResult }>();
-
 export async function handleApiRequest(
   pathname: string,
   params: URLSearchParams,
@@ -245,16 +165,5 @@ export async function handleApiRequest(
 ): Promise<ProxyResult> {
   const path = pathname.replace(/^\/api\//, "").replace(/\/+$/, "");
   const key = apiKey && apiKey.trim() ? apiKey.trim() : undefined;
-  if (path === "sparklines") {
-    params.sort();
-    const ck = params.toString();
-    const hit = sparkCache.get(ck);
-    if (hit && hit.expires > Date.now()) return hit.res;
-    const { complete, ...res } = await sparklines(params, key);
-    if (res.status === 200) {
-      sparkCache.set(ck, { expires: Date.now() + (complete ? 7200_000 : 60_000), res });
-    }
-    return res;
-  }
   return proxyOne(path, params, key);
 }

@@ -50,6 +50,3 @@ export interface NewsResponse {
 export type ChartPoint = [number, number];
 
 export type ChartPeriod = "24h" | "1w" | "1m" | "3m" | "1y" | "all";
-
-/** coinId → 7d sparkline points */
-export type SparklineMap = Record<string, ChartPoint[]>;

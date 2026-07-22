@@ -1,7 +1,5 @@
-import { useQueries } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { fetchSparklines } from "../../api/client.ts";
-import type { Coin, SparklineMap } from "../../api/types.ts";
+import { useState } from "react";
+import type { Coin } from "../../api/types.ts";
 
 export type SortField =
   | "rank"
@@ -56,51 +54,3 @@ export function filterAndSort(coins: Coin[], search: string, sort: SortState): C
   });
 }
 
-const CHUNK = 10;
-
-/**
- * Sparklines for the rank-chunks covering the given visible coins.
- * Chunks are defined on `rank` over the full list, so cache keys stay stable
- * no matter how the table is sorted or filtered.
- */
-export function useSparklinesFor(
-  allCoins: Coin[] | undefined,
-  visible: Coin[],
-): SparklineMap {
-  const chunks = useMemo(() => {
-    if (!allCoins?.length) return [] as string[][];
-    const wanted = new Set(visible.map((c) => Math.floor((c.rank - 1) / CHUNK)));
-    return [...wanted]
-      .sort((a, b) => a - b)
-      .map((i) =>
-        allCoins
-          .filter((c) => Math.floor((c.rank - 1) / CHUNK) === i)
-          .map((c) => c.id)
-          .sort(),
-      )
-      .filter((ids) => ids.length > 0);
-  }, [allCoins, visible]);
-
-  const results = useQueries({
-    queries: chunks.map((ids) => ({
-      queryKey: ["sparklines", ids] as const,
-      queryFn: () => fetchSparklines(ids),
-      staleTime: 3_600_000,
-      gcTime: 3_600_000,
-      // keep polling gently until every coin in the chunk has a sparkline
-      // (partial batches happen when the upstream rate limit blips)
-      refetchInterval: (query: { state: { data?: SparklineMap } }) => {
-        const data = query.state.data;
-        if (!data) return false;
-        return ids.every((id) => (data[id]?.length ?? 0) > 1) ? false : 30_000;
-      },
-    })),
-  });
-
-  return useMemo(() => {
-    const merged: SparklineMap = {};
-    for (const r of results) if (r.data) Object.assign(merged, r.data);
-    return merged;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results.map((r) => r.dataUpdatedAt).join(",")]);
-}

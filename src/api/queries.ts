@@ -11,7 +11,6 @@ import {
   fetchCoins,
   fetchMarkets,
   fetchNews,
-  fetchSparklines,
 } from "./client.ts";
 import type {
   ChartPeriod,
@@ -19,7 +18,6 @@ import type {
   Coin,
   GlobalMarkets,
   NewsItem,
-  SparklineMap,
 } from "./types.ts";
 
 // Free tier budget: 20k credits/month, 2 req/s. The proxy caches server-side;
@@ -86,19 +84,6 @@ export const useCoinChart = (
     queryFn: () => fetchCoinChart(id, period),
     staleTime: 300_000,
     placeholderData: keepPreviousData,
-  });
-
-/** Sparklines for a rank-chunk of coin ids (stable chunks → stable cache keys). */
-export const useSparklines = (
-  ids: string[],
-  enabled: boolean,
-): UseQueryResult<SparklineMap> =>
-  useQuery({
-    queryKey: ["sparklines", ids],
-    queryFn: () => fetchSparklines(ids),
-    staleTime: 3_600_000,
-    gcTime: 3_600_000,
-    enabled: enabled && ids.length > 0,
   });
 
 /** Warm the detail route's coin query (row hover/focus). */

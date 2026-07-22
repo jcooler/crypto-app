@@ -1,10 +1,4 @@
-import type {
-  ChartPoint,
-  Coin,
-  GlobalMarkets,
-  NewsItem,
-  SparklineMap,
-} from "./types.ts";
+import type { ChartPoint, Coin, GlobalMarkets, NewsItem } from "./types.ts";
 
 export class ApiError extends Error {
   constructor(
@@ -100,16 +94,6 @@ const normalizeChart = (data: any): ChartPoint[] => {
 export async function fetchCoinChart(id: string, period: string): Promise<ChartPoint[]> {
   const data = await apiGet<any>(`coins/${encodeURIComponent(id)}/charts`, { period });
   return normalizeChart(data);
-}
-
-export async function fetchSparklines(ids: string[]): Promise<SparklineMap> {
-  if (ids.length === 0) return {};
-  const data = await apiGet<any>("sparklines", { ids: ids.join(",") });
-  const out: SparklineMap = {};
-  for (const [id, points] of Object.entries(data ?? {})) {
-    out[id] = normalizeChart(points);
-  }
-  return out;
 }
 
 export async function fetchNews(limit = 12): Promise<NewsItem[]> {
