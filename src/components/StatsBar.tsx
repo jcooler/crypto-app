@@ -38,7 +38,7 @@ function Stat({
   change: number | null;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-1 px-4 py-3 first:pl-0 sm:px-6">
+    <div className="flex shrink-0 flex-col gap-1 px-4 py-3 first:pl-0 sm:px-6">
       <span className="microlabel whitespace-nowrap">{label}</span>
       <span className="flex items-baseline gap-2">
         {value === undefined ? (
@@ -82,7 +82,13 @@ export default function StatsBar() {
 
   return (
     <section aria-label="Global market statistics">
-      <div className="flex divide-x overflow-x-auto [&>*]:hairline">
+      {/* horizontally scrollable on narrow screens, so it must be focusable */}
+      <div
+        tabIndex={0}
+        role="group"
+        aria-label="Market statistics"
+        className="relative flex divide-x overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>*]:hairline"
+      >
         <Stat
           label="Total market cap"
           value={g?.marketCap}

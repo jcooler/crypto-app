@@ -26,3 +26,4 @@ dist-ssr
 screenshots/
 .playwright-mcp/
 .claude/settings.local.json*
+public/axe.min.js
